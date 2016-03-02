@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('date', 'Day');
+        data.addColumn('number', 'Creación de AILs');
+        data.addColumn('number', 'Resolución de AILs');
+        data.addColumn('number', 'Bloqueo de AILs');
+
+        data.addRows([
+        {% for day, val in data.items %}
+            [new Date({{ day.year }}, {{ day.month }} - 1, {{ day.day }}), {{ val.created }}, {{ val.resolved }}, {{ val.blocked }}],
+        {% endfor %}
+
+        ]);
+        var options = {
+          title: 'Entrada de incidencias en flujo de trabajo',
+          hAxis: {titleTextStyle: {color: '#333'}, format: 'd/M'},
+          vAxis: {title: '', minValue: 0},
+          isStacked: true,
+          width: 900,
+        };
+
+        var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="chart_div" style="width: 900px; height: 500px;"></div>
+  </body>
+</html>

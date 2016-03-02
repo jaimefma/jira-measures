@@ -1,0 +1,119 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+    <script type="text/javascript">
+      $(function () {
+        $('#container').highcharts({
+
+            chart: {
+                type: 'column'
+            },
+
+            title: {
+                text: 'AILs'
+            },
+
+            xAxis: {
+                categories: [
+                    {% for d, kpis in kpis.items %}
+                        "{{ d|date:"D d N" }}<br><b>Sol.: {{ kpis.solved|floatformat:2 }}</b><br><b>Time: {{ kpis.time|floatformat:1 }} days</b><br><b>Proces.: {{ kpis.processed|floatformat:2 }}</b>",
+                    {% endfor %}
+                ]
+            },
+
+            yAxis: {
+                allowDecimals: false,
+                min: 0,
+                title: {
+                    text: 'Number of fruits'
+                }
+            },
+
+            tooltip: {
+                formatter: function () {
+                    return '<b>' + this.x + '</b><br/>' +
+                        this.series.name + ': ' + this.y + '<br/>' +
+                        'Total: ' + this.point.stackTotal;
+                }
+            },
+
+            plotOptions: {
+                column: {
+                    stacking: 'normal'
+                }
+            },
+
+            series: [{
+                name: 'Created',
+                data: [{% for v in created %}{{ v }},{% endfor %}],
+                stack: 'available',
+                color: '#FF8B2B'
+            }, {
+                name: 'Re-Opened',
+                data: [{% for v in reopened %}{{ v }},{% endfor %}],
+                stack: 'available',
+                color: '#436DE0'
+            }, {
+                name: 'Opened',
+                data: [{% for v in opened %}{{ v }},{% endfor %}],
+                stack: 'available',
+                color: '#A1E7FF'
+{#            }, {#}
+{#                name: 'Old',#}
+{#                data: [{% for v in opened %}{{ v }},{% endfor %}],#}
+{#                stack: 'available'#}
+            }, {
+                name: 'Blocked',
+                data: [{% for v in blocked %}{{ v }},{% endfor %}],
+                stack: 'done',
+                color: '#F22222'
+            }, {
+                name: 'Resolved',
+                data: [{% for v in resolved %}{{ v }},{% endfor %}],
+                stack: 'done',
+                color: '#47ED05'
+            }, {
+                name: 'Closed',
+                data: [{% for v in closed.values %}{{ v|length }},{% endfor %}],
+                stack: 'done',
+            }]
+        });
+    });
+
+    </script>
+  </head>
+  <body>
+    <div id="container" style="width:100%; height:400px;"></div>
+{#    <p>* Las órdenes abiertas no pueden ser contabilizadas de manera completa, pudiendo ser éstas más de las que aquí se reflejan. </p>#}
+    <p>Un mismo ticket puede aparecer en más de un estado para un mismo día.</p>
+    <p>Solventadas: Cerradas / Creadas</p>
+    <p>Procesadas: (Bloqueadas + Resueltas) / (Creadas + Abiertas + Reabiertas)</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>AIL</th>
+                <th>Fecha de creación</th>
+                <th>Fecha de resolución</th>
+                <th>Tiempo desde su creación</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i_closed_date, values in closed.items %}
+            {% for i_id, i_creation_date in values %}
+            <tr>
+                <td><a href="https://paradigma.atlassian.net/browse/{{ i_id }}">{{ i_id }}</a></td>
+                <td>{{ i_creation_date }}</td>
+                <td>{{ i_closed_date }}</td>
+                <td>{{ i_creation_date|timesince:i_closed_date }}</td>
+            </tr>
+            {% endfor %}
+        {% endfor %}
+        </tbody>
+    </table>
+  </body>
+</html>
