@@ -1,0 +1,4 @@
+*pyc
+*~
+.idea
+jira_measures/jira_settings.py
