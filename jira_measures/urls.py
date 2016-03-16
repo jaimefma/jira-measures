@@ -21,6 +21,5 @@ from operations.views import ail_measures, ail_measures2
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
-    url(r'^ails/', ail_measures),
-    url(r'^ails2/', ail_measures2),
+    url(r'^/', ail_measures2),
 ]

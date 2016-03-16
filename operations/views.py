@@ -122,10 +122,7 @@ def process_issues(issues):
 
 def ail_measures2(request):
     end_date = datetime.date.today()
-    end_date = datetime.date(2016, 2, 13)
     start_date = end_date - relativedelta.relativedelta(weeks=2)
-    # end_date = datetime.date(2016, 2, 26)
-    # start_date = datetime.date(2016, 2, 24)
 
     issues = jira.search_issues('project = AIL AND updated > {} AND updated <= {} ORDER BY created ASC'.format(start_date.strftime('%Y-%m-%d'),
                                                                                                               end_date.strftime('%Y-%m-%d')),
